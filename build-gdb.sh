@@ -18,7 +18,6 @@
 #
 
 # include common function and variable definitions
-NDK_BUILDTOOLS_PATH="$(dirname $0)"
 . "$NDK_BUILDTOOLS_PATH/prebuilt-common.sh"
 . "$NDK_BUILDTOOLS_PATH/common-build-host-funcs.sh"
 
@@ -50,16 +49,16 @@ for four different systems:
 TOOLCHAIN_SRC_DIR=
 register_var_option "--toolchain-src-dir=<path>" TOOLCHAIN_SRC_DIR "Select toolchain source directory"
 
-GDB_VERSION="6.6 7.3.x"
+GDB_VERSION="7.9.1"
 register_var_option "--gdb-version=<version>" GDB_VERSION "Select GDB version(s)."
 
 BUILD_DIR=
 register_var_option "--build-dir=<path>" BUILD_DIR "Build GDB into directory"
 
-PYTHON_VERSION=
+PYTHON_VERSION="2.7.5"
 register_var_option "--python-version=<version>" PYTHON_VERSION "Python version."
 
-PYTHON_BUILD_DIR=
+PYTHON_BUILD_DIR="$TMPDIR/buildhost"
 register_var_option "--python-build-dir=<path>" PYTHON_BUILD_DIR "Python build directory."
 
 NDK_DIR=$ANDROID_NDK_ROOT
@@ -263,7 +262,7 @@ install_host_gdb ()
                 --gdb-executable-path=${DSTDIR}/bin/$(bh_tag_to_config_triplet $2)-gdb.exe \
                 --python-prefix-dir=${PYDIR} \
                 --mingw-w64-gcc=${GCC_FOR_STUB}
-            fail_panic "Failed to build gdb-sutb"
+            fail_panic "Failed to build gdb-stub"
             ;;
         *)
             ;;
