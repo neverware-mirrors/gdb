@@ -14,9 +14,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+"""Builds GDB for Android."""
 from __future__ import print_function
 
 import argparse
+import inspect
 import multiprocessing
 import os
 import subprocess
@@ -55,7 +57,8 @@ ALL_TOOLCHAINS = (
 class ArgParser(argparse.ArgumentParser):
     def __init__(self):
         super(ArgParser, self).__init__(
-            description='Builds GDB for Android.')
+            description=inspect.getdoc(sys.modules[__name__]),
+            formatter_class=argparse.RawDescriptionHelpFormatter)
 
         self.add_argument(
             '--host', choices=('darwin', 'linux', 'windows', 'windows64'),
