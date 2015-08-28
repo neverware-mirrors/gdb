@@ -251,10 +251,10 @@ install_host_gdb ()
     # build the gdb stub and replace gdb with it. This is done post-install
     # so files are in the correct place when determining the relative path.
 
+    dump "$TEXT Building gdb-stub"
+    bh_setup_host_env
     case "$1" in
         windows*)
-            dump "$TEXT Building gdb-stub"
-            bh_setup_host_env
             GCC_FOR_STUB=${BH_HOST_CONFIG}-gcc
             GCC_FOR_STUB_TARGET=`$GCC_FOR_STUB -dumpmachine`
             if [ "$GCC_FOR_STUB_TARGET" = "i586-mingw32msvc" ]; then
@@ -276,6 +276,15 @@ install_host_gdb ()
             fail_panic "Failed to build gdb-stub"
             ;;
         *)
+            # Generate a script which sets PYTHONHOME
+            GDB_PATH=${DSTDIR}/bin/$(bh_tag_to_config_triplet $2)-gdb
+            mv "$GDB_PATH" "$GDB_PATH"-orig
+            cat > "$GDB_PATH" << EOF
+#!/bin/bash
+GDBDIR=\$(dirname \$(readlink -f \$0))
+echo PYTHONHOME="\$GDBDIR/../../../$(python_ndk_install_dir $1)" "\$GDBDIR/$(bh_tag_to_config_triplet $2)-gdb-orig"
+EOF
+            chmod 755 $GDB_PATH
             ;;
     esac
 }
