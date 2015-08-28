@@ -127,7 +127,7 @@ gdb_ndk_package_name ()
 # directory. Relative to $NDK_DIR.
 gdb_ndk_install_dir ()
 {
-    echo "toolchains/gdb-$(get_toolchain_name_for_arch $(bh_tag_to_arch $2))-$3/prebuilt/$(install_dir_from_host_tag $1)"
+    echo "prebuilt/$(install_dir_from_host_tag $1)"
 }
 
 python_build_install_dir ()
