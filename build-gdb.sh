@@ -209,7 +209,11 @@ build_host_gdb ()
     run "$SRCDIR"/configure $ARGS &&
     run make -j$NUM_JOBS &&
     run make -j$NUM_JOBS install
-    fail_panic "Failed to configure/make/install gdb"
+
+    if [ $? -ne 0 ]; then
+        cp $BUILDDIR/config.log $PACKAGE_DIR/gdb_config.log
+        panic "Failed to configure/make/install gdb"
+    fi
 }
 
 need_build_host_gdb ()
