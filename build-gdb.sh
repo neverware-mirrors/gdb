@@ -229,8 +229,8 @@ need_build_host_gdb ()
 install_host_gdb ()
 {
     local SRCDIR="$(gdb_build_install_dir $1 $2 $3)"
-    local DSTDIR="$NDK_DIR/$(gdb_ndk_install_dir $1 $2 $3)"
-    local PYDIR="$NDK_DIR/$(python_ndk_install_dir $1)"
+    local DSTDIR="$TMPDIR/$(gdb_ndk_install_dir $1 $2 $3)"
+    local PYDIR="$TMPDIR/$(python_ndk_install_dir $1)"
 
     need_build_host_gdb $1 $2 $3
 
@@ -292,7 +292,8 @@ package_host_gdb ()
     bh_set_target_tag $2
 
     dump "$(bh_host_text) $PACKAGENAME: Packaging"
-    run pack_archive "$PACKAGE" "$NDK_DIR" "$SRCDIR"
+    run pack_archive "$PACKAGE" "$TMPDIR" "$SRCDIR"
+    fail_panic "Failed to package GDB!"
 }
 
 GDB_VERSION=$(commas_to_spaces $GDB_VERSION)
