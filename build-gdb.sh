@@ -198,6 +198,7 @@ build_host_gdb ()
     ARGS=$ARGS" --without-gmp"
     ARGS=$ARGS" --without-cloog"
     ARGS=$ARGS" --without-isl"
+    ARGS=$ARGS" --disable-sim"
     if [ -n "$PYTHON_VERSION" ]; then
         ARGS=$ARGS" --with-python=$(python_build_install_dir $BH_HOST_TAG)/bin/python-config.sh"
         if [ $1 = windows-x86 -o $1 = windows-x86_64 ]; then
