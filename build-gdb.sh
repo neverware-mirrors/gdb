@@ -160,7 +160,7 @@ build_expat ()
 
 need_build_expat ()
 {
-    bh_stamps_do host-expat-$1 build_expat $1
+    bh_do build_expat $1
 }
 
 # $1: host system tag
@@ -214,7 +214,7 @@ build_host_gdb ()
 
 need_build_host_gdb ()
 {
-    bh_stamps_do host-gdb-$1-$2-$3 build_host_gdb $1 $2 $3
+    bh_do build_host_gdb $1 $2 $3
 }
 
 # Install host GDB binaries and support files to the NDK install dir.
@@ -271,7 +271,7 @@ install_host_gdb ()
 
 need_install_host_gdb ()
 {
-    bh_stamps_do install-host-gdb-$1-$2-$3 install_host_gdb $1 $2 $3
+    bh_do install_host_gdb $1 $2 $3
 }
 
 # Package host GDB binaries into a tarball
@@ -283,8 +283,6 @@ package_host_gdb ()
     local SRCDIR="$(gdb_ndk_install_dir $1 $2 $3)"
     local PACKAGENAME=$(gdb_ndk_package_name $1 $2 $3).tar.bz2
     local PACKAGE="$PACKAGE_DIR/$PACKAGENAME"
-
-    need_install_host_gdb $1 $2 $3
 
     bh_set_target_tag $2
 
@@ -310,7 +308,7 @@ if [ "$PACKAGE_DIR" ]; then
         bh_setup_build_for_host $SYSTEM
         for ARCH in $ARCHS; do
             for VERSION in $GDB_VERSION; do
-                bh_stamps_do package_host_gdb-$SYSTEM-$ARCH-$VERSION package_host_gdb $SYSTEM android-$ARCH $VERSION
+                bh_do package_host_gdb $SYSTEM android-$ARCH $VERSION
             done
         done
     done
