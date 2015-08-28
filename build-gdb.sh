@@ -218,6 +218,7 @@ build_host_gdb ()
     if [ $? -ne 0 ]; then
         mkdir -p $PACKAGE_DIR/config_logs
         find $TMPDIR -name 'config.log' | cpio -pdm $PACKAGE_DIR/config_logs
+        cp $(python_build_install_dir $BH_HOST_TAG)/bin/python-config.sh $PACKAGE_DIR/config_logs
         panic "Failed to configure/make/install gdb"
     fi
 }
