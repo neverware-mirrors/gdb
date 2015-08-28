@@ -123,11 +123,11 @@ def main():
     print('Building {} gdb: {}'.format(host, ' '.join(toolchains)))
     build_cmd = [
         'bash', 'build-gdb.sh', "--toolchain-src-dir=" + toolchain_path,
-        "--ndk-dir=" + ndk_path,
+        "--ndk-dir=" + ndk_path, '--verbose',
         "--arch=" + ",".join([toolchain_to_arch(tc) for tc in toolchains]),
         package_dir_arg, jobs_arg,
     ]
-    print(build_cmd)
+    print(' '.join(build_cmd))
 
     subprocess.check_call(build_cmd, env=build_env)
 
