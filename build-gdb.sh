@@ -211,7 +211,8 @@ build_host_gdb ()
     run make -j$NUM_JOBS install
 
     if [ $? -ne 0 ]; then
-        cp $BUILDDIR/config.log $PACKAGE_DIR/gdb_config.log
+        mkdir -p $PACKAGE_DIR/config_logs
+        find $TMPDIR -name 'config.log' | cpio -pdm $PACKAGE_DIR/config_logs
         panic "Failed to configure/make/install gdb"
     fi
 }
