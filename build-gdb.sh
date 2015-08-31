@@ -107,24 +107,22 @@ done
 
 # Return the build install directory of a given GDB version
 # $1: host system tag
-# $2: target system tag
-# $3: gdb version
+# $2: gdb version
 gdb_build_install_dir ()
 {
-    echo "$BH_BUILD_DIR/install/$1/gdb-$(get_toolchain_name_for_arch $(bh_tag_to_arch $2))-$3"
+    echo "$BH_BUILD_DIR/install/$1/gdb-multiarch-$2"
 }
 
-# $1: host system tag
-# $2: target system tag
-# $3: gdb version
+# $1: gdb version
 gdb_ndk_package_name ()
 {
-    echo "gdb-$(get_toolchain_name_for_arch $(bh_tag_to_arch $2))-$3-$1"
+    echo "gdb-multiarch-$1"
 }
 
 
 # Same as gdb_build_install_dir, but for the final NDK installation
 # directory. Relative to $NDK_DIR.
+# $1: gdb version
 gdb_ndk_install_dir ()
 {
     echo "prebuilt/$(install_dir_from_host_tag $1)"
@@ -158,36 +156,35 @@ build_expat ()
     run make -j$NUM_JOBS install
 }
 
-need_build_expat ()
-{
-    bh_do build_expat $1
-}
-
 # $1: host system tag
-# $2: target tag
-# $3: gdb version
+# $2: gdb version
+# ${@:3}: target tags
 build_host_gdb ()
 {
-    local SRCDIR=$TOOLCHAIN_SRC_DIR/gdb/gdb-$3
-    local BUILDDIR=$BH_BUILD_DIR/build-gdb-$1-$2-$3
-    local INSTALLDIR=$(gdb_build_install_dir $1 $2 $3)
+    local SRCDIR=$TOOLCHAIN_SRC_DIR/gdb/gdb-$2
+    local BUILDDIR=$BH_BUILD_DIR/build-gdb-$1-multiarch-$2
+    local INSTALLDIR=$(gdb_build_install_dir $1 $2)
     local ARGS TEXT
 
     if [ ! -f "$SRCDIR/configure" ]; then
         panic "Missing configure script in $SRCDIR"
     fi
 
-    bh_set_target_tag $2
     bh_setup_host_env
 
-    need_build_expat $1
+    local TARGETS="$(bh_tag_to_config_triplet $1)"
+    for ARCH in ${@:3}; do
+        TARGETS="$TARGETS,$(bh_tag_to_config_triplet android-$ARCH)"
+    done
+
+    build_expat $1
     local EXPATPREFIX=$BH_BUILD_DIR/install-host-$1
 
     ARGS=" --prefix=$INSTALLDIR"
     ARGS=$ARGS" --disable-shared"
     ARGS=$ARGS" --build=$BH_BUILD_CONFIG"
     ARGS=$ARGS" --host=$BH_HOST_CONFIG"
-    ARGS=$ARGS" --target=$(bh_tag_to_config_triplet $2)"
+    ARGS=$ARGS" --enable-targets=$TARGETS"
     ARGS=$ARGS" --disable-werror"
     ARGS=$ARGS" --disable-nls"
     ARGS=$ARGS" --disable-docs"
@@ -199,6 +196,7 @@ build_host_gdb ()
     ARGS=$ARGS" --without-cloog"
     ARGS=$ARGS" --without-isl"
     ARGS=$ARGS" --disable-sim"
+    ARGS=$ARGS" --enable-gdbserver=no"
     if [ -n "$PYTHON_VERSION" ]; then
         ARGS=$ARGS" --with-python=$(python_build_install_dir $BH_HOST_TAG)/bin/python-config.sh"
         if [ $1 = windows-x86 -o $1 = windows-x86_64 ]; then
@@ -207,7 +205,7 @@ build_host_gdb ()
             CXXFLAGS=$CXXFLAGS" -D__USE_MINGW_ANSI_STDIO=1"
         fi
     fi
-    TEXT="$(bh_host_text) gdb-$BH_TARGET_ARCH-$3:"
+    TEXT="$(bh_host_text) gdb-multiarch-$2:"
 
     mkdir -p "$BUILDDIR" && rm -rf "$BUILDDIR"/* &&
     cd "$BUILDDIR" &&
@@ -224,26 +222,19 @@ build_host_gdb ()
     fi
 }
 
-need_build_host_gdb ()
-{
-    bh_do build_host_gdb $1 $2 $3
-}
-
 # Install host GDB binaries and support files to the NDK install dir.
 # $1: host tag
-# $2: target tag
-# $3: gdb version
+# $2: gdb version
+# ${@:3}: target tags
 install_host_gdb ()
 {
-    local SRCDIR="$(gdb_build_install_dir $1 $2 $3)"
-    local DSTDIR="$TMPDIR/$(gdb_ndk_install_dir $1 $2 $3)"
+    local SRCDIR="$(gdb_build_install_dir $1 $2)"
+    local DSTDIR="$TMPDIR/$(gdb_ndk_install_dir $1)"
     local PYDIR="$TMPDIR/$(python_ndk_install_dir $1)"
 
-    need_build_host_gdb $1 $2 $3
+    build_host_gdb $@
 
-    bh_set_target_tag $2
-
-    dump "$(bh_host_text) gdb-$BH_TARGET_ARCH-$3: Installing"
+    dump "$(bh_host_text) gdb-multiarch-$2: Installing"
     run copy_directory "$SRCDIR/bin" "$DSTDIR/bin"
     if [ -d "$SRCDIR/share/gdb" ]; then
         run copy_directory "$SRCDIR/share/gdb" "$DSTDIR/share/gdb"
@@ -252,8 +243,7 @@ install_host_gdb ()
     # build the gdb stub and replace gdb with it. This is done post-install
     # so files are in the correct place when determining the relative path.
 
-    dump "$TEXT Building gdb-stub"
-    bh_setup_host_env
+    dump "$(bh_host_text) Generating gdb-stub..."
     case "$1" in
         windows*)
             GCC_FOR_STUB=${BH_HOST_CONFIG}-gcc
@@ -263,49 +253,36 @@ install_host_gdb ()
                 dump "Override compiler for gdb-stub: $GCC_FOR_STUB"
             fi
 
-            # Uses $TOOLCHAIN_PATH/bin/$(bh_tag_to_config_triplet $2)-gdb.exe (1) instead of
-            # ${DSTDIR}/bin/$(bh_tag_to_config_triplet $2)-gdb.exe (2) because
-            # the final layout is to (1) which is a folder deeper than (2).
-            # Sample (1):
-            #  $NDK/gdb-arm-linux-androideabi-4.8/prebuilt/windows/bin/arm-linux-androideabi-gdb.exe
-            # Sample (2):
-            #  $NDK/toolchains/windows/arm-linux-androideabi-4.8/prebuilt/bin/arm-linux-androideabi-gdb.exe
             run $NDK_BUILDTOOLS_PATH/build-gdb-stub.sh \
-                --gdb-executable-path=${DSTDIR}/bin/$(bh_tag_to_config_triplet $2)-gdb.exe \
+                --gdb-executable-path=${DSTDIR}/bin/gdb.exe \
                 --python-prefix-dir=${PYDIR} \
                 --mingw-w64-gcc=${GCC_FOR_STUB}
             fail_panic "Failed to build gdb-stub"
             ;;
         *)
             # Generate a script which sets PYTHONHOME
-            GDB_PATH=${DSTDIR}/bin/$(bh_tag_to_config_triplet $2)-gdb
+            GDB_PATH=${DSTDIR}/bin/gdb
             mv "$GDB_PATH" "$GDB_PATH"-orig
             cat > "$GDB_PATH" << EOF
 #!/bin/bash
 GDBDIR=\$(dirname \$(readlink -f \$0))
-PYTHONHOME="\$GDBDIR/../../../$(python_ndk_install_dir $1)" "\$GDBDIR/$(bh_tag_to_config_triplet $2)-gdb-orig"
+PYTHONHOME="\$GDBDIR/../../../$(python_ndk_install_dir $1)" "\$GDBDIR/gdb-orig"
 EOF
             chmod 755 $GDB_PATH
             ;;
     esac
-}
-
-need_install_host_gdb ()
-{
-    bh_do install_host_gdb $1 $2 $3
+    dump "$(bh_host_text) Done generating gdb-stub."
 }
 
 # Package host GDB binaries into a tarball
 # $1: host tag
-# $2: target tag
-# $3: gdb version
+# $2: gdb version
+# ${@:3}: target tags
 package_host_gdb ()
 {
-    local SRCDIR="$(gdb_ndk_install_dir $1 $2 $3)"
-    local PACKAGENAME=$(gdb_ndk_package_name $1 $2 $3).tar.bz2
+    local SRCDIR="$(gdb_ndk_install_dir $1)"
+    local PACKAGENAME=$(gdb_ndk_package_name $2).tar.bz2
     local PACKAGE="$PACKAGE_DIR/$PACKAGENAME"
-
-    bh_set_target_tag $2
 
     dump "$(bh_host_text) $PACKAGENAME: Packaging"
     run pack_archive "$PACKAGE" "$TMPDIR" "$SRCDIR"
@@ -318,20 +295,16 @@ ARCHS=$(commas_to_spaces $ARCHS)
 # Let's build this
 for SYSTEM in $BH_HOST_SYSTEMS; do
     bh_setup_build_for_host $SYSTEM
-    for ARCH in $ARCHS; do
-        for VERSION in $GDB_VERSION; do
-            need_install_host_gdb $SYSTEM android-$ARCH $VERSION
-        done
+    for VERSION in $GDB_VERSION; do
+        install_host_gdb $SYSTEM $VERSION $ARCHS
     done
 done
 
 if [ "$PACKAGE_DIR" ]; then
     for SYSTEM in $BH_HOST_SYSTEMS; do
         bh_setup_build_for_host $SYSTEM
-        for ARCH in $ARCHS; do
-            for VERSION in $GDB_VERSION; do
-                bh_do package_host_gdb $SYSTEM android-$ARCH $VERSION
-            done
+        for VERSION in $GDB_VERSION; do
+            bh_do package_host_gdb $SYSTEM $VERSION $ARCHS
         done
     done
 fi

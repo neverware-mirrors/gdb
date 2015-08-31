@@ -24,20 +24,9 @@ site.addsitedir(os.path.join(os.path.dirname(__file__), '../../ndk/build/lib'))
 
 import build_support
 
-
-class ArgParser(build_support.ArgParser):
-    def __init__(self):
-        super(ArgParser, self).__init__()
-
-        self.add_argument(
-            '--arch', choices=build_support.ALL_ARCHITECTURES,
-            help='Architecture to target. Builds all if not present.')
-
-
 def main(args):
+    # Always build all architectures for gdb, since we're building multiarch
     arches = build_support.ALL_ARCHITECTURES
-    if args.arch is not None:
-        arches = [args.arch]
 
     toolchain_src_arg = '--toolchain-src-dir={}'.format(
         build_support.toolchain_path())
@@ -53,4 +42,4 @@ def main(args):
     build_support.build(build_cmd, args)
 
 if __name__ == '__main__':
-    build_support.run(main, ArgParser)
+    build_support.run(main)
