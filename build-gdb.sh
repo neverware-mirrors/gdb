@@ -182,8 +182,18 @@ build_host_gdb ()
 
     ARGS=" --prefix=$INSTALLDIR"
     ARGS=$ARGS" --disable-shared"
-    ARGS=$ARGS" --build=$BH_BUILD_CONFIG"
-    ARGS=$ARGS" --host=$BH_HOST_CONFIG"
+
+    case "$BH_BUILD_CONFIG" in
+        # For some reason, multiarch + darwin doesn't build a gdb binary when
+        # --build or --host are specified.
+        *darwin*)
+            ;;
+        *)
+            ARGS=$ARGS" --build=$BH_BUILD_CONFIG"
+            ARGS=$ARGS" --host=$BH_HOST_CONFIG"
+            ;;
+    esac
+
     ARGS=$ARGS" --enable-targets=$TARGETS"
     ARGS=$ARGS" --disable-werror"
     ARGS=$ARGS" --disable-nls"
