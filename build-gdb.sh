@@ -113,10 +113,11 @@ gdb_build_install_dir ()
     echo "$BH_BUILD_DIR/install/$1/gdb-multiarch-$2"
 }
 
-# $1: gdb version
+# $1: host system tag
+# $2: gdb version
 gdb_ndk_package_name ()
 {
-    echo "gdb-multiarch-$1"
+    echo "gdb-multiarch-$2-$1"
 }
 
 
@@ -291,7 +292,7 @@ EOF
 package_host_gdb ()
 {
     local SRCDIR="$(gdb_ndk_install_dir $1)"
-    local PACKAGENAME=$(gdb_ndk_package_name $2).tar.bz2
+    local PACKAGENAME=$(gdb_ndk_package_name $1 $2).tar.bz2
     local PACKAGE="$PACKAGE_DIR/$PACKAGENAME"
 
     dump "$(bh_host_text) $PACKAGENAME: Packaging"
