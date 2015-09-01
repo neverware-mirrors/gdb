@@ -49,13 +49,13 @@ for four different systems:
 TOOLCHAIN_SRC_DIR=
 register_var_option "--toolchain-src-dir=<path>" TOOLCHAIN_SRC_DIR "Select toolchain source directory"
 
-GDB_VERSION="7.9.1"
+GDB_VERSION=$DEFAULT_GDB_VERSION
 register_var_option "--gdb-version=<version>" GDB_VERSION "Select GDB version(s)."
 
 BUILD_DIR=
 register_var_option "--build-dir=<path>" BUILD_DIR "Build GDB into directory"
 
-PYTHON_VERSION="2.7.5"
+PYTHON_VERSION=$DEFAULT_PYTHON_VERSION
 register_var_option "--python-version=<version>" PYTHON_VERSION "Python version."
 
 PYTHON_BUILD_DIR="$TMPDIR/buildhost"
