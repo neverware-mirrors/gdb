@@ -32,7 +32,8 @@ def main(args):
         build_support.toolchain_path())
     ndk_dir_arg = '--ndk-dir={}'.format(build_support.ndk_path())
     arch_arg = '--arch={}'.format(','.join(arches))
-    systems_arg = '--systems={}'.format(args.host)
+    systems_arg = '--systems={}'.format(build_support.host_to_tag(args.host))
+
     build_cmd = [
         'bash', 'build-gdb.sh', toolchain_src_arg, ndk_dir_arg, arch_arg,
         systems_arg, build_support.jobs_arg(),
