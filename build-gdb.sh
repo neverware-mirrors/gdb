@@ -277,7 +277,7 @@ install_host_gdb ()
             cat > "$GDB_PATH" << EOF
 #!/bin/bash
 GDBDIR=\$(dirname \$(readlink -f \$0))
-PYTHONHOME="\$GDBDIR/../../../$(python_ndk_install_dir $1)" "\$GDBDIR/gdb-orig"
+PYTHONHOME="\$GDBDIR/../../../$(python_ndk_install_dir $1)" "\$GDBDIR/gdb-orig" "\$@"
 EOF
             chmod 755 $GDB_PATH
             ;;
