@@ -2973,7 +2973,7 @@ ac_exeext=$ac_cv_exeext
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether the C compiler works" >&5
 $as_echo_n "checking whether the C compiler works... " >&6; }
 # If not cross compiling, check that we can run a simple program.
-if test "$cross_compiling" = no; then
+if test "$cross_compiling" != yes; then
   if { ac_try='./$ac_file'
   { { case "(($ac_try" in
   *\"* | *\`* | *\\*) ac_try_echo=\$ac_try;;
