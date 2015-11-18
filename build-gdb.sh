@@ -126,12 +126,12 @@ gdb_ndk_package_name ()
 # $1: gdb version
 gdb_ndk_install_dir ()
 {
-    echo "prebuilt/$(install_dir_from_host_tag $1)"
+    echo "host-tools/"
 }
 
 python_build_install_dir ()
 {
-    echo "$PYTHON_BUILD_DIR/install/prebuilt/$(install_dir_from_host_tag $1)"
+    echo "$PYTHON_BUILD_DIR/install/host-tools/"
 }
 
 # $1: host system tag
