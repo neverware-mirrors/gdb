@@ -22,7 +22,8 @@ import site
 
 site.addsitedir(os.path.join(os.path.dirname(__file__), '../../ndk/build/lib'))
 
-import build_support
+import build_support  # pylint: disable=import-error
+
 
 def main(args):
     # Always build all architectures for gdb, since we're building multiarch
@@ -41,7 +42,7 @@ def main(args):
 
     print('Building {} gdb: {}'.format(args.host, ' '.join(arches)))
     print(' '.join(build_cmd))
-    build_support.build(build_cmd, args)
+    build_support.build(build_cmd, args, intermediate_package=True)
 
 if __name__ == '__main__':
     build_support.run(main)
