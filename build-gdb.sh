@@ -131,7 +131,7 @@ gdb_ndk_install_dir ()
 
 python_build_install_dir ()
 {
-    echo "$PYTHON_BUILD_DIR/install/host-tools/"
+    echo "$PYTHON_BUILD_DIR/$1/install/host-tools/"
 }
 
 # $1: host system tag
@@ -209,7 +209,7 @@ build_host_gdb ()
     ARGS=$ARGS" --disable-sim"
     ARGS=$ARGS" --enable-gdbserver=no"
     if [ -n "$PYTHON_VERSION" ]; then
-        ARGS=$ARGS" --with-python=$(python_build_install_dir $BH_HOST_TAG)/bin/python-config.sh"
+        ARGS=$ARGS" --with-python=$(python_build_install_dir $1)/bin/python-config.sh"
         if [ $1 = windows-x86 -o $1 = windows-x86_64 ]; then
             # This is necessary for the Python integration to build.
             CFLAGS=$CFLAGS" -D__USE_MINGW_ANSI_STDIO=1"
@@ -228,7 +228,7 @@ build_host_gdb ()
     if [ $? -ne 0 ]; then
         mkdir -p $PACKAGE_DIR/config_logs
         find $TMPDIR -name 'config.log' | cpio -pdm $PACKAGE_DIR/config_logs
-        cp $(python_build_install_dir $BH_HOST_TAG)/bin/python-config.sh $PACKAGE_DIR/config_logs
+        cp $(python_build_install_dir $1)/bin/python-config.sh $PACKAGE_DIR/config_logs
         panic "Failed to configure/make/install gdb"
     fi
 }
