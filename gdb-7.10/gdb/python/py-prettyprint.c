@@ -722,7 +722,7 @@ gdbpy_apply_val_pretty_printer (const struct extension_language_defn *extlang,
   if (!value_bytes_available (val, embedded_offset, TYPE_LENGTH (type)))
     return EXT_LANG_RC_NOP;
 
-  if (!gdb_python_initialized)
+  if (!python_available () || !gdb_python_initialized)
     return EXT_LANG_RC_NOP;
 
   cleanups = ensure_python_env (gdbarch, language);
