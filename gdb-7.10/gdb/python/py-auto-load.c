@@ -46,8 +46,6 @@ show_auto_load_python_scripts (struct ui_file *file, int from_tty,
 int
 gdbpy_auto_load_enabled (const struct extension_language_defn *extlang)
 {
-  if (!python_available ())
-    return 0;
   return auto_load_python_scripts;
 }
 
