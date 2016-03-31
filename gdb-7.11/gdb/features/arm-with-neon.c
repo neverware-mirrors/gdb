@@ -14,6 +14,8 @@ initialize_tdesc_arm_with_neon (void)
 
   set_tdesc_architecture (result, bfd_scan_arch ("arm"));
 
+  set_tdesc_osabi (result, osabi_from_tdesc_string ("GNU/Linux"));
+
   feature = tdesc_create_feature (result, "org.gnu.gdb.arm.core");
   tdesc_create_reg (feature, "r0", 0, 1, NULL, 32, "uint32");
   tdesc_create_reg (feature, "r1", 1, 1, NULL, 32, "uint32");

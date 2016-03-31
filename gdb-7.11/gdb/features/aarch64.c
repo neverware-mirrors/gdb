@@ -16,6 +16,8 @@ initialize_tdesc_aarch64 (void)
 
   set_tdesc_architecture (result, bfd_scan_arch ("aarch64"));
 
+  set_tdesc_osabi (result, osabi_from_tdesc_string ("GNU/Linux"));
+
   feature = tdesc_create_feature (result, "org.gnu.gdb.aarch64.core");
   tdesc_create_reg (feature, "x0", 0, 1, NULL, 64, "int");
   tdesc_create_reg (feature, "x1", 1, 1, NULL, 64, "int");
