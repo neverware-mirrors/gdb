@@ -158,6 +158,30 @@ build_expat ()
 }
 
 # $1: host system tag
+build_lzma ()
+{
+    local ARGS
+    local SRCDIR=$TOOLCHAIN_SRC_DIR/xz
+    local BUILDDIR=$BH_BUILD_DIR/build-xz-$1
+    local INSTALLDIR=$BH_BUILD_DIR/install-host-$1
+
+    ARGS=" --prefix=$INSTALLDIR"
+    ARGS=$ARGS" --disable-shared --enable-static"
+    ARGS=$ARGS" --disable-xz --disable-xzdec --disable-lzmadec --disable-scripts --disable-doc"
+    ARGS=$ARGS" --build=$BH_BUILD_CONFIG"
+    ARGS=$ARGS" --host=$BH_HOST_CONFIG"
+
+    TEXT="$(bh_host_text) lzma:"
+
+    mkdir -p "$BUILDDIR" && rm -rf "$BUILDDIR"/* &&
+    cd "$BUILDDIR" &&
+    dump "$TEXT Building"
+    run "$SRCDIR"/configure $ARGS &&
+    run make -j$NUM_JOBS &&
+    run make -j$NUM_JOBS install
+}
+
+# $1: host system tag
 # $2: gdb version
 # ${@:3}: target tags
 build_host_gdb ()
@@ -181,6 +205,9 @@ build_host_gdb ()
     build_expat $1
     local EXPATPREFIX=$BH_BUILD_DIR/install-host-$1
 
+    build_lzma $1
+    local LZMAPREFIX=$BH_BUILD_DIR/install-host-$1
+
     ARGS=" --prefix=$INSTALLDIR"
     ARGS=$ARGS" --disable-shared"
 
@@ -201,6 +228,8 @@ build_host_gdb ()
     ARGS=$ARGS" --disable-docs"
     ARGS=$ARGS" --with-expat"
     ARGS=$ARGS" --with-libexpat-prefix=$EXPATPREFIX"
+    ARGS=$ARGS" --with-lzma"
+    ARGS=$ARGS" --with-liblzma-prefix=$LZMAPREFIX"
     ARGS=$ARGS" --without-mpc"
     ARGS=$ARGS" --without-mpfr"
     ARGS=$ARGS" --without-gmp"
