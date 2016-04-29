@@ -219,9 +219,6 @@ build_host_gdb ()
     build_expat $1
     local EXPATPREFIX=$BH_BUILD_DIR/install-host-$1
 
-    build_lzma $1
-    local LZMAPREFIX=$BH_BUILD_DIR/install-host-$1
-
     ARGS=" --prefix=$INSTALLDIR"
     ARGS=$ARGS" --disable-shared"
 
@@ -236,14 +233,25 @@ build_host_gdb ()
             ;;
     esac
 
+    case "$BH_BUILD_CONFIG" in
+      *windows*)
+        # The liblzma build fails when targeting windows, for some reason.
+        ;;
+
+      *)
+        build_lzma $1
+        local LZMAPREFIX=$BH_BUILD_DIR/install-host-$1
+        ARGS=$ARGS" --with-lzma"
+        ARGS=$ARGS" --with-liblzma-prefix=$LZMAPREFIX"
+        ;;
+    esac
+
     ARGS=$ARGS" --enable-targets=$TARGETS"
     ARGS=$ARGS" --disable-werror"
     ARGS=$ARGS" --disable-nls"
     ARGS=$ARGS" --disable-docs"
     ARGS=$ARGS" --with-expat"
     ARGS=$ARGS" --with-libexpat-prefix=$EXPATPREFIX"
-    ARGS=$ARGS" --with-lzma"
-    ARGS=$ARGS" --with-liblzma-prefix=$LZMAPREFIX"
     ARGS=$ARGS" --without-mpc"
     ARGS=$ARGS" --without-mpfr"
     ARGS=$ARGS" --without-gmp"
