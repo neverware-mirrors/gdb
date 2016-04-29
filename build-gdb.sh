@@ -176,6 +176,11 @@ build_lzma ()
     mkdir -p "$BUILDDIR" && rm -rf "$BUILDDIR"/* &&
     cd "$BUILDDIR" &&
     dump "$TEXT Building"
+
+    # HACK: git doesn't keep track of file modification date, so autoconf will sometimes (usually?)
+    # want to regenerate itself. Trick it into not doing so by touching all of the source files.
+    local NOW=`date`
+    run find $SRCDIR -exec touch -d "$now" {} + &&
     run "$SRCDIR"/configure $ARGS &&
     run make -j$NUM_JOBS &&
     run make -j$NUM_JOBS install
