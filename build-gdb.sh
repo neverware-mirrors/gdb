@@ -179,8 +179,17 @@ build_lzma ()
 
     # HACK: git doesn't keep track of file modification date, so autoconf will sometimes (usually?)
     # want to regenerate itself. Trick it into not doing so by touching all of the source files.
-    local NOW=`date`
-    run find $SRCDIR -exec touch -d "$now" {} + &&
+    case "$BH_BUILD_CONFIG" in
+      *darwin*)
+        # Darwin's touch sucks.
+        run find $SRCDIR -exec touch -t 197001010000 {} +
+        ;;
+
+      *)
+        run find $SRCDIR -exec touch -d "`date`" {} +
+        ;;
+    esac
+
     run "$SRCDIR"/configure $ARGS &&
     run make -j$NUM_JOBS &&
     run make -j$NUM_JOBS install
