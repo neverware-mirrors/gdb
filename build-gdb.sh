@@ -233,9 +233,9 @@ build_host_gdb ()
             ;;
     esac
 
-    case "$BH_BUILD_CONFIG" in
-      *windows*)
-        # The liblzma build fails when targeting windows, for some reason.
+    case "$1" in
+      *windows)
+        # The liblzma build fails when targeting windows32, for some reason.
         ;;
 
       *)
