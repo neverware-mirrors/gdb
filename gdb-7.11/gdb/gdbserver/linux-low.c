@@ -56,6 +56,12 @@
 #endif
 #include "nat/linux-namespaces.h"
 
+#if defined(__mips__) && !defined(DT_MIPS_RLD_MAP_REL)
+/* Define the DT_MIPS_RLD_MAP_REL dyntag here, until the prebuilts/ndk sysroot
+   gets updated with it's definition. */
+#define DT_MIPS_RLD_MAP_REL     0x70000035 /* Address of run time loader map, used for debugging. */
+#endif
+
 #ifndef SPUFS_MAGIC
 #define SPUFS_MAGIC 0x23c9b64e
 #endif
