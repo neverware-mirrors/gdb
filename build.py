@@ -40,6 +40,10 @@ def main(args):
         systems_arg, build_support.jobs_arg(),
     ]
 
+    build_cmd.append('--build-dir=' + os.path.join(args.out_dir, 'gdb'))
+    build_cmd.append(
+        '--python-build-dir=' + os.path.join(args.out_dir, 'python'))
+
     print('Building {} gdb: {}'.format(args.host, ' '.join(arches)))
     print(' '.join(build_cmd))
     build_support.build(build_cmd, args, intermediate_package=True)

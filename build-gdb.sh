@@ -58,7 +58,7 @@ register_var_option "--build-dir=<path>" BUILD_DIR "Build GDB into directory"
 PYTHON_VERSION=$DEFAULT_PYTHON_VERSION
 register_var_option "--python-version=<version>" PYTHON_VERSION "Python version."
 
-PYTHON_BUILD_DIR="$TMPDIR/buildhost"
+PYTHON_BUILD_DIR=
 register_var_option "--python-build-dir=<path>" PYTHON_BUILD_DIR "Python build directory."
 
 NDK_DIR=$ANDROID_NDK_ROOT
@@ -95,7 +95,11 @@ for VERSION in $(commas_to_spaces $GDB_VERSION); do
 done
 
 if [ -z "$BUILD_DIR" ] ; then
-    BUILD_DIR=$TMPDIR/buildgdb
+    panic "--build-dir is required"
+fi
+
+if [ -z "$PYTHON_BUILD_DIR" ] ; then
+    panic "--python-build-dir is required"
 fi
 
 bh_setup_build_dir $BUILD_DIR
