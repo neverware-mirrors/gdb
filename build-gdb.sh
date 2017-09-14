@@ -102,6 +102,9 @@ if [ -z "$PYTHON_BUILD_DIR" ] ; then
     panic "--python-build-dir is required"
 fi
 
+INSTALL_DIR=$BUILD_DIR/install
+BUILD_DIR=$BUILD_DIR/build
+
 bh_setup_build_dir $BUILD_DIR
 
 # Sanity check that we have the right compilers for all hosts
@@ -279,13 +282,7 @@ build_host_gdb ()
     run "$SRCDIR"/configure $ARGS &&
     run make -j$NUM_JOBS &&
     run make -j$NUM_JOBS install
-
-    if [ $? -ne 0 ]; then
-        mkdir -p $PACKAGE_DIR/config_logs
-        find $TMPDIR -name 'config.log' | cpio -pdm $PACKAGE_DIR/config_logs
-        cp $(python_build_install_dir $1)/bin/python-config.sh $PACKAGE_DIR/config_logs
-        panic "Failed to configure/make/install gdb"
-    fi
+    fail_panic "Failed to configure/make/install gdb"
 }
 
 # Install host GDB binaries and support files to the NDK install dir.
@@ -295,8 +292,8 @@ build_host_gdb ()
 install_host_gdb ()
 {
     local SRCDIR="$(gdb_build_install_dir $1 $2)"
-    local DSTDIR="$TMPDIR/$(gdb_ndk_install_dir $1)"
-    local PYDIR="$TMPDIR/$(python_ndk_install_dir $1)"
+    local DSTDIR="$INSTALL_DIR/$(gdb_ndk_install_dir $1)"
+    local PYDIR="$INSTALL_DIR/$(python_ndk_install_dir $1)"
 
     build_host_gdb $@
 
@@ -351,7 +348,7 @@ package_host_gdb ()
     local PACKAGE="$PACKAGE_DIR/$PACKAGENAME"
 
     dump "$(bh_host_text) $PACKAGENAME: Packaging"
-    run pack_archive "$PACKAGE" "$TMPDIR" "$SRCDIR"
+    run pack_archive "$PACKAGE" "$INSTALL_DIR" "$SRCDIR"
     fail_panic "Failed to package GDB!"
 }
 
