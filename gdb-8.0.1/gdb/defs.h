@@ -750,4 +750,8 @@ DEF_ENUM_FLAGS_TYPE (enum user_selected_what_flag, user_selected_what);
 
 #include "utils.h"
 
+#ifdef HAVE_PYTHON
+extern int python_available (void);
+#endif
+
 #endif /* #ifndef DEFS_H */

@@ -563,7 +563,7 @@ varobj_get_display_hint (const struct varobj *var)
   gdb::unique_xmalloc_ptr<char> result;
 
 #if HAVE_PYTHON
-  if (!gdb_python_initialized)
+  if (!python_available () || !gdb_python_initialized)
     return NULL;
 
   gdbpy_enter_varobj enter_py (var);
@@ -693,7 +693,7 @@ dynamic_varobj_has_child_method (const struct varobj *var)
 {
   PyObject *printer = var->dynamic->pretty_printer;
 
-  if (!gdb_python_initialized)
+  if (!python_available () || !gdb_python_initialized)
     return 0;
 
   gdbpy_enter_varobj enter_py (var);
@@ -1200,7 +1200,7 @@ install_new_value_visualizer (struct varobj *var)
 #if HAVE_PYTHON
   /* If the constructor is None, then we want the raw value.  If VAR
      does not have a value, just skip this.  */
-  if (!gdb_python_initialized)
+  if (!python_available () || !gdb_python_initialized)
     return;
 
   if (var->dynamic->constructor != Py_None && var->value != NULL)
@@ -1472,7 +1472,7 @@ varobj_set_visualizer (struct varobj *var, const char *visualizer)
 #if HAVE_PYTHON
   PyObject *mainmod;
 
-  if (!gdb_python_initialized)
+  if (!python_available () || !gdb_python_initialized)
     return;
 
   gdbpy_enter_varobj enter_py (var);
@@ -2415,7 +2415,7 @@ varobj_value_get_print_value (struct value *value,
   std::string thevalue;
 
 #if HAVE_PYTHON
-  if (gdb_python_initialized)
+  if (python_available () && gdb_python_initialized)
     {
       PyObject *value_formatter =  var->dynamic->pretty_printer;
 

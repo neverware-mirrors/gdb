@@ -33,6 +33,13 @@
 #include "python.h"
 #include "extension-priv.h"
 #include "cli/cli-utils.h"
+#include "gdb_wait.h"
+
+#ifdef HAVE_UNISTD_H
+#include <unistd.h>
+#endif
+
+#include <sys/types.h>
 #include <ctype.h>
 #include "location.h"
 #include "ser-event.h"
@@ -1575,6 +1582,9 @@ do_start_initialization ()
 #endif
 #endif
 
+  if (!python_available ())
+    return false;
+
   Py_Initialize ();
   PyEval_InitThreads ();
 
@@ -1695,6 +1705,44 @@ do_start_initialization ()
 }
 
 #endif /* HAVE_PYTHON */
+
+#ifdef HAVE_PYTHON
+/* Check whether python is available at runtime. */
+
+int
+python_available(void)
+{
+#ifndef HAVE_WORKING_FORK
+  return 1;
+#endif
+
+  static int python_status = -1;
+  int child_status = 0;
+
+  if (python_status != -1)
+    return python_status;
+
+  pid_t pid = fork ();
+
+  if (pid < 0)
+    perror_with_name (("fork"));
+
+  if (pid == 0)
+    {
+      freopen ("/dev/null", "w", stderr);
+      Py_Initialize ();
+      _exit(0);
+    }
+
+  wait (&child_status);
+  if (WIFEXITED (child_status) && WEXITSTATUS (child_status) == 0)
+    python_status = 1;
+  else
+    python_status = 0;
+
+  return python_status;
+}
+#endif
 
 void
 _initialize_python (void)
@@ -1849,6 +1897,9 @@ do_finish_initialization (const struct extension_language_defn *extlang)
 static void
 gdbpy_finish_initialization (const struct extension_language_defn *extlang)
 {
+  if (!python_available())
+    return;
+
   gdbpy_enter enter_py (get_current_arch (), current_language);
 
   if (!do_finish_initialization (extlang))
