@@ -6626,7 +6626,7 @@ fi
 
 # For other settings, only the main target counts.
 gdb_sim=
-gdb_osabi=
+gdb_osabi=GDB_OSABI_LINUX
 build_gdbserver=
 targ=$target; . ${srcdir}/configure.tgt
 

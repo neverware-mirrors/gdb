@@ -16,6 +16,8 @@ initialize_tdesc_aarch64 (void)
 
   set_tdesc_architecture (result, bfd_scan_arch ("aarch64"));
 
+  set_tdesc_osabi (result, osabi_from_tdesc_string ("GNU/Linux"));
+
   feature = tdesc_create_feature (result, "org.gnu.gdb.aarch64.core");
   type = tdesc_create_flags (feature, "cpsr_flags", 4);
   tdesc_add_flag (type, 0, "SP");
