@@ -1818,7 +1818,7 @@ message == an error message without a stack will be printed."),
 			&user_show_python_list);
 
 #ifdef HAVE_PYTHON
-  if (!do_start_initialization () && PyErr_Occurred ())
+  if (!do_start_initialization () && python_available () && PyErr_Occurred ())
     gdbpy_print_stack ();
 #endif /* HAVE_PYTHON */
 }
