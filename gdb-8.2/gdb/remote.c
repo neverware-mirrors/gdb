@@ -4232,14 +4232,14 @@ stop_reply_extract_thread (char *stop_reply)
 	{
 	  const char *p1;
 
-	  p1 = strchr (p, ':');
+	  p1 = strchrnul (p, ':');
 	  if (p1 == NULL)
 	    return null_ptid;
 
 	  if (strncmp (p, "thread", p1 - p) == 0)
 	    return read_ptid (++p1, &p);
 
-	  p1 = strchr (p, ';');
+	  p1 = strchrnul (p, ';');
 	  if (p1 == NULL)
 	    return null_ptid;
 	  p1++;
@@ -5300,7 +5300,7 @@ remote_target::remote_query_supported ()
 	 there's another item after this, we overwrite the separator
 	 (terminated strings are much easier to work with).  */
       p = next;
-      end = strchr (p, ';');
+      end = strchrnul (p, ';');
       if (end == NULL)
 	{
 	  end = p + strlen (p);
@@ -5318,7 +5318,7 @@ remote_target::remote_query_supported ()
 	    }
 	}
 
-      name_end = strchr (p, '=');
+      name_end = strchrnul (p, '=');
       if (name_end)
 	{
 	  /* This is a name=value entry.  */
@@ -5967,7 +5967,7 @@ remote_target::remote_vcont_probe ()
 	  else if (*p == 'r' && (*(p + 1) == ';' || *(p + 1) == 0))
 	    rs->supports_vCont.r = 1;
 
-	  p = strchr (p, ';');
+	  p = strchrnul (p, ';');
 	}
 
       /* If c, and C are not all supported, we can't use vCont.  Clearing
@@ -7227,7 +7227,7 @@ remote_target::remote_parse_stop_reply (char *buf, stop_reply *event)
 	  const char *p1;
 	  int fieldsize;
 
-	  p1 = strchr (p, ':');
+	  p1 = strchrnul (p, ':');
 	  if (p1 == NULL)
 	    error (_("Malformed packet(a) (missing colon): %s\n\
 Packet: '%s'\n"),
@@ -10339,7 +10339,7 @@ remote_target::insert_watchpoint (CORE_ADDR addr, int len,
     set_general_process ();
 
   xsnprintf (rs->buf, endbuf - rs->buf, "Z%x,", packet);
-  p = strchr (rs->buf, '\0');
+  p = strchrnul (rs->buf, '\0');
   addr = remote_address_masked (addr);
   p += hexnumstr (p, (ULONGEST) addr);
   xsnprintf (p, endbuf - p, ",%x", len);
@@ -10388,7 +10388,7 @@ remote_target::remove_watchpoint (CORE_ADDR addr, int len,
     set_general_process ();
 
   xsnprintf (rs->buf, endbuf - rs->buf, "z%x,", packet);
-  p = strchr (rs->buf, '\0');
+  p = strchrnul (rs->buf, '\0');
   addr = remote_address_masked (addr);
   p += hexnumstr (p, (ULONGEST) addr);
   xsnprintf (p, endbuf - p, ",%x", len);
@@ -10563,7 +10563,7 @@ remote_target::insert_hw_breakpoint (struct gdbarch *gdbarch,
     case PACKET_ERROR:
       if (rs->buf[1] == '.')
         {
-          message = strchr (rs->buf + 2, '.');
+          message = strchrnul (rs->buf + 2, '.');
           if (message)
             error (_("Remote failure reply: %s"), message + 1);
         }
@@ -11194,7 +11194,7 @@ remote_target::rcmd (const char *command, struct ui_file *outbuf)
 
   /* The query prefix.  */
   strcpy (rs->buf, "qRcmd,");
-  p = strchr (rs->buf, '\0');
+  p = strchrnul (rs->buf, '\0');
 
   if ((strlen (rs->buf) + strlen (command) * 2 + 8/*misc*/)
       > get_remote_packet_size ())
@@ -13238,7 +13238,7 @@ remote_target::trace_find (enum trace_find_type type, int num,
 
   p = rs->buf;
   strcpy (p, "QTFrame:");
-  p = strchr (p, '\0');
+  p = strchrnul (p, '\0');
   switch (type)
     {
     case tfind_number:

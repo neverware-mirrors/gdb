@@ -11467,6 +11467,8 @@ _ACEOF
 $as_echo_n "checking for a traditional japanese locale... " >&6; }
 if ${gt_cv_locale_ja+:} false; then :
   $as_echo_n "(cached) " >&6
+elif test "$cross_compiling" = yes; then :
+  gt_cv_locale_ja=none
 else
 
     cat confdefs.h - <<_ACEOF >conftest.$ac_ext
@@ -11606,6 +11608,8 @@ $as_echo "$gt_cv_locale_ja" >&6; }
 $as_echo_n "checking for a transitional chinese locale... " >&6; }
 if ${gt_cv_locale_zh_CN+:} false; then :
   $as_echo_n "(cached) " >&6
+elif test "$cross_compiling" = yes; then :
+  gt_cv_locale_zh_CN=none
 else
 
     cat confdefs.h - <<_ACEOF >conftest.$ac_ext
@@ -11738,6 +11742,8 @@ $as_echo "$gt_cv_locale_zh_CN" >&6; }
 $as_echo_n "checking for a french Unicode locale... " >&6; }
 if ${gt_cv_locale_fr_utf8+:} false; then :
   $as_echo_n "(cached) " >&6
+elif test "$cross_compiling" = yes; then :
+  gt_cv_locale_fr_utf8=none
 else
 
     cat confdefs.h - <<_ACEOF >conftest.$ac_ext
@@ -11867,6 +11873,8 @@ $as_echo "$gt_cv_locale_fr_utf8" >&6; }
 $as_echo_n "checking for a traditional french locale... " >&6; }
 if ${gt_cv_locale_fr+:} false; then :
   $as_echo_n "(cached) " >&6
+elif test "$cross_compiling" = yes; then :
+  gt_cv_locale_fr=none
 else
 
     cat confdefs.h - <<_ACEOF >conftest.$ac_ext
