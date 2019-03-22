@@ -22,7 +22,8 @@ import site
 
 site.addsitedir(os.path.join(os.path.dirname(__file__), '../../ndk/build/lib'))
 
-import build_support  # pylint: disable=import-error
+
+import build_support  # pylint: disable=import-error,wrong-import-position
 
 
 def main(args):
@@ -33,7 +34,7 @@ def main(args):
         build_support.toolchain_path())
     ndk_dir_arg = '--ndk-dir={}'.format(build_support.ndk_path())
     arch_arg = '--arch={}'.format(','.join(arches))
-    systems_arg = '--systems={}'.format(build_support.host_to_tag(args.host))
+    systems_arg = f'--systems={build_support.host_to_tag(args.host)}'
 
     build_cmd = [
         'bash', 'build-gdb.sh', toolchain_src_arg, ndk_dir_arg, arch_arg,
@@ -44,9 +45,10 @@ def main(args):
     build_cmd.append(
         '--python-build-dir=' + os.path.join(args.out_dir, 'python'))
 
-    print('Building {} gdb: {}'.format(args.host, ' '.join(arches)))
+    print('Building {} gdb: {}'.format(args.host.value, ' '.join(arches)))
     print(' '.join(build_cmd))
     build_support.build(build_cmd, args, intermediate_package=True)
+
 
 if __name__ == '__main__':
     build_support.run(main)
