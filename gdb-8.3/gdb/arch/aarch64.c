@@ -32,6 +32,7 @@ aarch64_create_target_description (uint64_t vq)
 
 #ifndef IN_PROCESS_AGENT
   set_tdesc_architecture (tdesc, "aarch64");
+  set_tdesc_osabi (tdesc, "GNU/Linux");
 #endif
 
   long regnum = 0;

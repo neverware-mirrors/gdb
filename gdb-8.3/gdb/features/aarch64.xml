@@ -9,6 +9,7 @@
 <!DOCTYPE target SYSTEM "gdb-target.dtd">
 <target>
   <architecture>aarch64</architecture>
+  <osabi>GNU/Linux</osabi>
   <xi:include href="aarch64-core.xml"/>
   <xi:include href="aarch64-fpu.xml"/>
 </target>

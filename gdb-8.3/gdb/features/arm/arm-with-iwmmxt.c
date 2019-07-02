@@ -12,6 +12,8 @@ initialize_tdesc_arm_with_iwmmxt (void)
   struct target_desc *result = allocate_target_description ();
   set_tdesc_architecture (result, bfd_scan_arch ("iwmmxt"));
 
+  set_tdesc_osabi (result, osabi_from_tdesc_string ("GNU/Linux"));
+
   struct tdesc_feature *feature;
 
   feature = tdesc_create_feature (result, "org.gnu.gdb.arm.core");
