@@ -364,7 +364,7 @@ remote_open (const char *name)
 
       memset (&sockaddr, 0, sizeof sockaddr);
       sockaddr.sun_family = AF_UNIX;
-      strlcpy (sockaddr.sun_path, name, sizeof (sockaddr.sun_path));
+      snprintf (sockaddr.sun_path, sizeof (sockaddr.sun_path), "%s", name);
       sockaddrlen = sizeof (sockaddr.sun_family) +
           strlen (sockaddr.sun_path) + 1;
 
