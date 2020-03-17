@@ -300,7 +300,7 @@ handle_open (char *own_buf)
 {
   char filename[HOSTIO_PATH_MAX];
   char *p;
-  int fileio_flags, fileio_mode, flags, fd;
+  int fileio_flags, fileio_mode, flags, fd = -1;
   mode_t mode;
   struct fd_list *new_fd;
 
@@ -324,7 +324,11 @@ handle_open (char *own_buf)
   if (hostio_fs_pid != 0 && the_target->multifs_open != NULL)
     fd = the_target->multifs_open (hostio_fs_pid, filename,
 				   flags, mode);
-  else
+
+  /* HACK: multifs_open will fail for android applications, because run-as does
+     not switch to the same mount namespace as the running application. Retry
+     with regular open if this happens.  */
+  if (fd == -1)
     fd = open (filename, flags, mode);
 
   if (fd == -1)

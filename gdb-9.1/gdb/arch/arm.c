@@ -419,6 +419,8 @@ arm_create_target_description (arm_fp_type fp_type)
       error (_("Invalid Arm FP type: %d"), fp_type);
     }
 
+  set_tdesc_osabi (tdesc, "GNU/Linux");
+
   return tdesc;
 }
 

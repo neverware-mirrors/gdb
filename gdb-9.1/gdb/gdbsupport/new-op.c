@@ -22,6 +22,10 @@
 # define __has_feature(x) 0
 #endif
 
+// ANDROID CHANGE: Can not override operator new for libc++ in WIN32.
+// See b/135839860.
+#if !defined(_WIN32)
+
 #if !__has_feature(address_sanitizer) && !defined(__SANITIZE_ADDRESS__)
 #include "common-defs.h"
 #include "host-defs.h"
@@ -92,4 +96,6 @@ operator new[] (std::size_t sz, const std::nothrow_t&) noexcept
 {
   return ::operator new (sz, std::nothrow);
 }
+#endif
+
 #endif
