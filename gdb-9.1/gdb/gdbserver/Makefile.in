@@ -410,7 +410,7 @@ gdbserver$(EXEEXT): $(sort $(OBS)) ${CDEPS} $(LIBGNU) $(LIBIBERTY)
 	$(SILENCE) rm -f gdbserver$(EXEEXT)
 	$(ECHO_CXXLD) $(CC_LD) $(INTERNAL_CFLAGS) $(INTERNAL_LDFLAGS) \
 		-o gdbserver$(EXEEXT) $(OBS) $(LIBGNU) $(LIBIBERTY) \
-		$(GDBSERVER_LIBS) $(XM_CLIBS)
+		$(GDBSERVER_LIBS) $(XM_CLIBS) -ldl
 
 $(LIBGNU) $(LIBIBERTY) $(GNULIB_H): all-lib
 all-lib: $(GNULIB_BUILDDIR)/Makefile $(LIBIBERTY_BUILDDIR)/Makefile
