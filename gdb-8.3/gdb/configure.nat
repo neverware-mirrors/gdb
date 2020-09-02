@@ -325,8 +325,6 @@ case ${gdb_host} in
 	case ${gdb_host_cpu} in
 	    i386)
 		NATDEPFILES="${NATDEPFILES} amd64-windows-nat.o"
-                # ANDROID CHANGE: libc++ requires libucrt. See b/136093140
-                LOADLIBES="-lc++ -nodefaultlibs -Wl,--start-group -lmingw32 -lgcc -lgcc_eh -lmoldname -lmingwex -lmsvcrt -lucrt -lpthread -ladvapi32 -lshell32 -luser32 -lkernel32 -lpsapi -Wl,--end-group"
 		;;
 	esac
 	;;
