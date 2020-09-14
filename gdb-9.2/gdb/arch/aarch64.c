@@ -47,5 +47,7 @@ aarch64_create_target_description (uint64_t vq, bool pauth_p)
   if (pauth_p)
     regnum = create_feature_aarch64_pauth (tdesc, regnum);
 
+  set_tdesc_osabi (tdesc, "GNU/Linux");
+
   return tdesc;
 }

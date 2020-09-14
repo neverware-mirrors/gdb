@@ -39,5 +39,7 @@ aarch32_create_target_description ()
   regnum = create_feature_arm_arm_vfpv3 (tdesc, regnum);
   tdesc_create_feature (tdesc, "org.gnu.gdb.arm.neon");
 
+  set_tdesc_osabi (tdesc, "GNU/Linux");
+
   return tdesc;
 }

@@ -10128,6 +10128,8 @@ $as_echo "$gl_cv_header_sys_socket_h_shut" >&6; }
 $as_echo_n "checking absolute name of <sys/socket.h>... " >&6; }
 if ${gl_cv_next_sys_socket_h+:} false; then :
   $as_echo_n "(cached) " >&6
+elif test "$cross_compiling" = yes; then :
+  gt_cv_locale_ja=none
 else
 
              if test $ac_cv_header_sys_socket_h = yes; then
@@ -10320,6 +10322,8 @@ done
 $as_echo_n "checking whether $gl_func is declared without a macro... " >&6; }
 if eval \${$as_gl_Symbol+:} false; then :
   $as_echo_n "(cached) " >&6
+elif test "$cross_compiling" = yes; then :
+  gt_cv_locale_zh_CN=none
 else
   cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
@@ -10418,6 +10422,8 @@ $as_echo "#define HAVE_IPV4 1" >>confdefs.h
 $as_echo_n "checking for IPv6 sockets... " >&6; }
   if ${gl_cv_socket_ipv6+:} false; then :
   $as_echo_n "(cached) " >&6
+elif test "$cross_compiling" = yes; then :
+  gt_cv_locale_fr_utf8=none
 else
   cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
@@ -10554,6 +10560,8 @@ $as_echo "$gl_cv_next_limits_h" >&6; }
 $as_echo_n "checking whether limits.h has ULLONG_WIDTH etc.... " >&6; }
 if ${gl_cv_header_limits_width+:} false; then :
   $as_echo_n "(cached) " >&6
+elif test "$cross_compiling" = yes; then :
+  gt_cv_locale_fr=none
 else
   cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
