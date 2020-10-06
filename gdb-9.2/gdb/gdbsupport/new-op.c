@@ -1,6 +1,6 @@
 /* Replace operator new/new[], for GDB, the GNU debugger.
 
-   Copyright (C) 2016-2019 Free Software Foundation, Inc.
+   Copyright (C) 2016-2020 Free Software Foundation, Inc.
 
    This file is part of GDB.
 
@@ -60,17 +60,14 @@ operator new (std::size_t sz)
 	 QUIT gdb_exception.  This is necessary because operator new
 	 can only ever throw std::bad_alloc, or something that extends
 	 it.  */
-      TRY
+      try
 	{
 	  malloc_failure (sz);
 	}
-      CATCH (ex, RETURN_MASK_ALL)
+      catch (gdb_exception &ex)
 	{
-	  do_cleanups (all_cleanups ());
-
-	  throw gdb_quit_bad_alloc (ex);
+	  throw gdb_quit_bad_alloc (std::move (ex));
 	}
-      END_CATCH
     }
   return p;
 }
@@ -96,4 +93,3 @@ operator new[] (std::size_t sz, const std::nothrow_t&) noexcept
   return ::operator new (sz, std::nothrow);
 }
 #endif
-
